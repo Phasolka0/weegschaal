@@ -81,5 +81,32 @@ namespace esphome
       std::string toString() const;
       static Body decode(const uint8_t *values, bool useTimeoffset);
     };
+
+    /// Struct containing all measurement data for a user, passed to on_user_metrics_updated trigger
+    struct UserMeasurement
+    {
+      uint8_t user_id{0}; // 1-8
+
+      // Person data
+      uint8_t age{0};
+      float size{0}; // in meters
+      bool is_male{false};
+      bool high_activity{false};
+
+      // Weight data
+      float weight{0};
+      float bmi{0};
+      bool has_weight{false};
+
+      // Body composition
+      uint32_t kcal{0};
+      float fat{0};
+      float tbw{0};
+      float muscle{0};
+      float bone{0};
+      bool has_body{false};
+
+      time_t timestamp{0};
+    };
   } // namespace medisana_bs444
 } // namespace esphome
