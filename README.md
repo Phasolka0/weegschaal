@@ -143,9 +143,8 @@ time:
 
 ## support
 
-Confirmed: BS444
-Likely compatible: BS410 / BS430 / BS440
-(only BS444 was tested)
+Confirmed to work with: BS430, BS440, BS444, BS550
+Likely compatible with other Medisana Scales
 
 ## credits
 based on reverse engineering from https://github.com/keptenkurk/BS440
