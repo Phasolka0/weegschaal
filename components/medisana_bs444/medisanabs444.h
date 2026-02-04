@@ -3,6 +3,7 @@
 #ifdef USE_ESP32
 
 #include "esphome/core/component.h"
+#include "esphome/core/automation.h"
 
 #include "esphome/components/sensor/sensor.h"
 #ifdef USE_BINARY_SENSOR
@@ -124,6 +125,25 @@ namespace esphome
 
     private:
       u_int32_t registered_notifications_ = 0;
+
+    public:
+      void add_on_user_metrics_updated_callback(std::function<void(const UserMeasurement &)> callback)
+      {
+        this->user_metrics_updated_callback_.add(std::move(callback));
+      }
+
+    protected:
+      CallbackManager<void(const UserMeasurement &)> user_metrics_updated_callback_;
+    };
+
+    class UserMetricsUpdatedTrigger : public Trigger<const UserMeasurement &>
+    {
+    public:
+      explicit UserMetricsUpdatedTrigger(MedisanaBS444 *parent)
+      {
+        parent->add_on_user_metrics_updated_callback([this](const UserMeasurement &measurement)
+                                                     { this->trigger(measurement); });
+      }
     };
   } // namespace medisana_bs444
 } // namespace esphome

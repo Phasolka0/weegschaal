@@ -109,6 +109,15 @@ namespace esphome
           if ((mPerson.person >= 1) && (mPerson.person <= 8))
           {
             uint8_t index = mPerson.person - 1;
+
+            // Prepare measurement data for callback
+            UserMeasurement measurement;
+            measurement.user_id = mPerson.person;
+            measurement.age = mPerson.age;
+            measurement.size = mPerson.size;
+            measurement.is_male = mPerson.male;
+            measurement.high_activity = mPerson.highActivity;
+
             // static data
             if (this->age_sensor_[index] && mPerson.age)
               this->age_sensor_[index]->publish_state(mPerson.age);
@@ -129,6 +138,13 @@ namespace esphome
                 this->weight_sensor_[index]->publish_state(mWeight.weight);
               if (this->bmi_sensor_[index] && mPerson.size)
                 this->bmi_sensor_[index]->publish_state(mWeight.weight / (mPerson.size * mPerson.size));
+
+              // Add weight data to measurement
+              measurement.weight = mWeight.weight;
+              measurement.has_weight = true;
+              measurement.timestamp = mWeight.timestamp;
+              if (mPerson.size > 0)
+                measurement.bmi = mWeight.weight / (mPerson.size * mPerson.size);
             }
             if (mBody.valid && (mBody.person == mPerson.person))
             {
@@ -143,7 +159,21 @@ namespace esphome
                 this->muscle_sensor_[index]->publish_state(mBody.muscle);
               if (this->bone_sensor_[index])
                 this->bone_sensor_[index]->publish_state(mBody.bone);
+
+              // Add body data to measurement
+              measurement.kcal = mBody.kcal;
+              measurement.fat = mBody.fat;
+              measurement.tbw = mBody.tbw;
+              measurement.muscle = mBody.muscle;
+              measurement.bone = mBody.bone;
+              measurement.has_body = true;
+              // Use body timestamp if no weight timestamp
+              if (measurement.timestamp == 0)
+                measurement.timestamp = mBody.timestamp;
             }
+
+            // Fire the callback with all measurement data
+            this->user_metrics_updated_callback_.call(measurement);
           }
         }
 
