@@ -106,9 +106,9 @@ namespace esphome
         {
           // this is a measurement
           ESP_LOGI(TAG, "Person %s:", mPerson.toString().c_str());
-          if ((mPerson.person >= 1) && (mPerson.person <= 8))
+          if (((mPerson.person >= 1) && (mPerson.person <= 8)) || (mPerson.person == 255))
           {
-            uint8_t index = mPerson.person - 1;
+            uint8_t index = (mPerson.person == 255) ? 0 : mPerson.person - 1;
 
             // Prepare measurement data for callback
             UserMeasurement measurement;
